@@ -120,12 +120,12 @@ function DomainSearchResults({ domainQuery, isLoading, setIsLoading }: DomainSea
 
           fetch(`${bruteServerUrl}/bruteDomain?domain=${domainQuery}`)
             .then((response) => response.json())
-            .then((data: RecordWithSelector[]) => {
+            .then((data: any) => {
               
               setRecords((prevRecords) => {
                 const newRecordsMap = new Map(prevRecords);
                 
-                data.forEach((record) => {
+                data.forEach((record: { domain: string; selector: string; value: string }) => {
                   if (record.value) {
                     const uniqueId = nextBruteForceIdRef.current++;
                     
