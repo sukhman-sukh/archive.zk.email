@@ -62,11 +62,13 @@ function DomainSearchResults({ domainQuery, isLoading, setIsLoading }: DomainSea
       setFetchMessage("Failed to fetch from archive. Brute Forcing the domain against common selectors ...");
       // console.log("Length of filtered records = 0");
       
-      const bruteServerUrl = process.env.BRUTE_SELECTOR_SERVER_URL;
+      const bruteServerUrl = "https://archive-zk-email-2.onrender.com" //process.env.BRUTE_SELECTOR_SERVER_URL;
       if (bruteServerUrl) {
         const socket = io(bruteServerUrl);
+        console.log("Trying to connect")
         setSocket(socket);
         socket.on("connect", () => {
+          console.log("connected to webscoket")
           socket.emit("bruteDomain", { domain: domainQuery });
         });
 
@@ -80,7 +82,7 @@ function DomainSearchResults({ domainQuery, isLoading, setIsLoading }: DomainSea
               lastRecordUpdate: new Date(),
               sourceIdentifier: 'brute-forced',
             };
-            
+            console.log(data)
             const newRecord: RecordWithSelector = {
               id: uniqueId,
               domainSelectorPairId: uniqueId,
@@ -110,6 +112,7 @@ function DomainSearchResults({ domainQuery, isLoading, setIsLoading }: DomainSea
 
         socket.on("processingComplete", (data) => {
           setCursor(null);
+          console.log("processing complete")
           setFetchMessage(null);
           socket.disconnect();
         });
@@ -123,6 +126,7 @@ function DomainSearchResults({ domainQuery, isLoading, setIsLoading }: DomainSea
             .then((data: any) => {
               
               setRecords((prevRecords) => {
+                console.log("going through http path")
                 const newRecordsMap = new Map(prevRecords);
                 
                 data.forEach((record: { domain: string; selector: string; value: string }) => {
